@@ -42,11 +42,13 @@ vterm_cmd() {
     vterm_printf "51;E$vterm_elisp"
 }
 
-# This is to change the title of the buffer based on information provided by the
-# shell. See, http://tldp.org/HOWTO/Xterm-Title-4.html, for the meaning of the
-# various symbols.
-autoload -U add-zsh-hook
-add-zsh-hook -Uz chpwd (){ print -Pn "\e]2;%m:%2~\a" }
+# This stuff not needed in omz - but we do need to patch lib/termsupport.zsh to allow INSIDE_EMACS = vterm
+# 
+# # This is to change the title of the buffer based on information provided by the
+# # shell. See, http://tldp.org/HOWTO/Xterm-Title-4.html, for the meaning of the
+# # various symbols.
+# autoload -U add-zsh-hook
+# add-zsh-hook -Uz chpwd (){ print -Pn "\e]2;%m:%2~\a" }
 
 # TODO: Fix this for omz
 
@@ -56,9 +58,17 @@ add-zsh-hook -Uz chpwd (){ print -Pn "\e]2;%m:%2~\a" }
 #
 # The escape sequence "51;A" has also the role of identifying the end of the
 # prompt
-# vterm_prompt_end() {
-#     vterm_printf "51;A$(whoami)@$(hostname):$(pwd)";
-# }
+vterm_prompt_end() {
+    vterm_printf "51;A$(whoami)@$(hostname):$(pwd)";
+}
 # setopt PROMPT_SUBST
 # PROMPT=$PROMPT'%{$(vterm_prompt_end)%}'
 
+
+find_file() {
+    vterm_cmd find-file "$(realpath "${@:-.}")"
+}
+
+say() {
+    vterm_cmd message "%s" "$*"
+}
